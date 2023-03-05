@@ -2,9 +2,35 @@ import React, { useState } from "react";
 
 const Problem1 = () => {
   const [show, setShow] = useState("all");
+  const [tasks, setTasks] = useState([]);
 
   const handleClick = (val) => {
     setShow(val);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const name = e.target[0].value;
+    const status = e.target[1].value.toLowerCase();
+    const newTask = { name, status };
+    setTasks([...tasks, newTask]);
+  };
+
+  const filteredData = () => {
+    if (show === "all") {
+      return tasks;
+    } else {
+      return tasks.filter((task) => task.status === show);
+    }
+  };
+
+  const sortData = (data) => {
+    const activeTasks = data.filter((task) => task.status === "active");
+    const completedTasks = data.filter((task) => task.status === "completed");
+    const otherTasks = data.filter(
+      (task) => task.status !== "active" && task.status !== "completed"
+    );
+    return [...activeTasks, ...completedTasks, ...otherTasks];
   };
 
   return (
@@ -12,7 +38,10 @@ const Problem1 = () => {
       <div className="row justify-content-center mt-5">
         <h4 className="text-center text-uppercase mb-5">Problem-1</h4>
         <div className="col-6 ">
-          <form className="row gy-2 gx-3 align-items-center mb-4">
+          <form
+            className="row gy-2 gx-3 align-items-center mb-4"
+            onSubmit={handleSubmit}
+          >
             <div className="col-auto">
               <input type="text" className="form-control" placeholder="Name" />
             </div>
@@ -68,7 +97,14 @@ const Problem1 = () => {
                 <th scope="col">Status</th>
               </tr>
             </thead>
-            <tbody></tbody>
+            <tbody>
+              {sortData(filteredData()).map((task, index) => (
+                <tr key={index}>
+                  <td>{task.name}</td>
+                  <td>{task.status}</td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </div>
       </div>
